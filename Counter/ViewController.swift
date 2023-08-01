@@ -9,35 +9,47 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var countButton: UIButton!
+    @IBOutlet private weak var countButton: UIButton!
     
-    @IBOutlet weak var countResultLabel: UILabel!
+    @IBOutlet private weak var countResultLabel: UILabel!
     
-    @IBOutlet weak var countMinusButton: UIButton!
+    @IBOutlet private weak var countMinusButton: UIButton!
     
-    @IBOutlet weak var restartButton: UIButton!
+    @IBOutlet private weak var restartButton: UIButton!
     
-    @IBOutlet weak var textHistoryOfButtonClick: UITextView!
+    @IBOutlet private weak var textHistoryOfButtonClick: UITextView!
+    
+    private var countResult: Int = 0
+    private var history: String = "История изменений:\n"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         countResultLabel.text = "Значение счётчика: 0"
         textHistoryOfButtonClick.text = "История изменений:"
         textHistoryOfButtonClick.isEditable = false
         textHistoryOfButtonClick.isScrollEnabled = true
     }
     
-    private var countResult: Int = 0
-    private var history: String = "История изменений:\n"
+    private func formatDateToString(date: Date, format: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        return formatter.string(from: date)
+    }
     
-    @IBAction func buttonDidTap(_ sender: Any) {
+    private func addToHistory(_ action: String) {
+        let date = Date()
+        let formattedDate = formatDateToString(date: date, format: "dd.MM.yyyy HH:mm:ss")
+        history += "\(formattedDate): \(action)\n"
+        textHistoryOfButtonClick.text = history
+    }
+    
+    @IBAction private func buttonDidTap(_ sender: Any) {
         countResult += 1
         countResultLabel.text = "Значение счётчика: \(countResult)"
         addToHistory("значение изменено на +1")
     }
     
-    @IBAction func buttonMinusDidTap(_ sender: Any) {
+    @IBAction private func buttonMinusDidTap(_ sender: Any) {
         if countResult <= 0 {
             countResult = 0
             addToHistory("попытка уменьшить значение счётчика ниже 0")
@@ -48,23 +60,11 @@ class ViewController: UIViewController {
         countResultLabel.text = "Значение счётчика: \(countResult)"
     }
     
-    @IBAction func restartButtonDidTap(_ sender: Any) {
+    @IBAction private func restartButtonDidTap(_ sender: Any) {
         countResult = 0
         countResultLabel.text = "Значение счётчика: \(countResult)"
         addToHistory("значение сброшено")
     }
     
-    func formatDateToString(date: Date, format: String) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = format
-        return formatter.string(from: date)
-    }
-    
-    func addToHistory(_ action: String) {
-        let date = Date()
-        let formattedDate = formatDateToString(date: date, format: "dd.MM.yyyy HH:mm:ss")
-        history += "\(formattedDate): \(action)\n"
-        textHistoryOfButtonClick.text = history
-    }
 }
 
